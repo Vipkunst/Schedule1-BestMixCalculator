@@ -1,0 +1,37 @@
+[
+  {
+    "id": "og_kush",
+    "effects": [ "calming" ],
+    "baseprice":  35
+  },
+  {
+    "id": "sour_diesel",
+    "effects": [ "refreshing" ],
+    "baseprice": 35
+  },
+  {
+    "id": "green_crack",
+    "effects": [ "energizing" ],
+    "baseprice": 35
+  },
+  {
+    "id": "granddaddy_purple",
+    "effects": [ "sedating" ],
+    "baseprice": 35
+  },
+  {
+    "id": "meth",
+    "effects": [],
+    "baseprice": 70
+  },
+  {
+    "id": "cocaine",
+    "effects": [],
+    "baseprice": 150
+  },
+  {
+    "id": "shroom",
+    "effects": [],
+    "baseprice": 65
+  }
+]

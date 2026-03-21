@@ -1,0 +1,18 @@
+[
+  { "id": "cuke", "cost": 2, "effects": ["energizing"] },
+  { "id": "banana", "cost": 2, "effects": ["gingeritis"] },
+  { "id": "paracetamol", "cost": 3, "effects": ["sneaky"] },
+  { "id": "donut", "cost": 3, "effects": ["calorie_dense"] },
+  { "id": "viagra", "cost": 4, "effects": ["tropic_thunder"] },
+  { "id": "mouthwash", "cost": 4, "effects": ["balding"] },
+  { "id": "flu_medicine", "cost": 5, "effects": ["sedating"] },
+  { "id": "energy_drink", "cost": 6, "effects": ["athletic"] },
+  { "id": "motor_oil", "cost": 6, "effects": ["slippery"] },
+  { "id": "gasoline", "cost": 5, "effects": ["sedating"] },
+  { "id": "mega_bean", "cost": 7, "effects": ["foggy"] },
+  { "id": "chili", "cost": 7, "effects": ["spicy"] },
+  { "id": "battery", "cost": 8, "effects": ["bright_eyed"] },
+  { "id": "iodine", "cost": 8, "effects": ["jennerising"] },
+  { "id": "addy", "cost": 9, "effects": ["thought_provoking"] },
+  { "id": "horse_semen", "cost": 9, "effects": ["long_faced"] }
+]

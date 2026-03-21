@@ -1,0 +1,34 @@
+﻿@model (List<Ingredient> bestComboIngredients, double bestProfit, double bestSellPrice, double bestComboCost, List<Effect> bestComboEffects)
+
+@{
+    ViewData["Title"] = "Home Page";
+}
+
+<div class="text-center">
+    <h1 class="display-4">Best @Model.bestComboIngredients.Count Ingredient Mix</h1>
+    @foreach (var ingedient in Model.bestComboIngredients)
+    {
+        <div>
+            @ingedient.Id
+        </div>
+    }
+
+    <br />
+
+    <div>
+        <div>TotalCost: @Model.bestComboCost</div>
+        <div>SellingCost: @Model.bestSellPrice</div>
+    </div>
+
+    <br />
+
+    <div>
+        <div>Effects:</div>
+        @foreach (var effect in Model.bestComboEffects)
+        {
+            <div>
+                @effect.Id
+            </div>
+        }
+    </div>
+</div>
