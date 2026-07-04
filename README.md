@@ -6,24 +6,36 @@ A small ASP.NET Core MVC web app that finds the **most profitable ingredient mix
 
 ## What it does
 
-Given a product (e.g. OG Kush) and a number of ingredients, the calculator returns:
+Pick a **base product** and how many **ingredients** to use, hit **Calculate**, and the app shows the most profitable recipe it can find:
 
 - the exact **order** in which to add the ingredients,
-- the resulting **effects**,
-- the **total ingredient cost**, and
-- the **selling price** and profit.
+- the resulting **effects** (with each effect's price multiplier),
+- the **ingredient cost**, **sell price**, and **profit**.
 
-Example output for the best 4‑ingredient OG Kush mix:
+It's a dark, "toxic‑lab" themed web page — a form with two dropdowns at the top, and a result card below.
+
+Example — the best 4‑ingredient OG Kush mix:
 
 ```
-Best 4 Ingredient Mix
-  viagra → mega_bean → banana → cuke   (mixing order)
+Best 4-Ingredient Mix
 
-  TotalCost:    15
-  SellingCost:  111
+  Sell Price   $111      Ingredient Cost   $15      Profit   $96
 
-  Effects: cyclopean, glowing, tropic_thunder, thought_provoking, energizing
+  Mixing Order:  Viagra → Mega Bean → Banana → Cuke
+
+  Effects:  Cyclopean +56%   Glowing +48%   Tropic Thunder +46%
+            Thought-Provoking +44%   Energizing +22%
 ```
+
+### What the effect `%` means
+
+Each effect's percentage is its **price multiplier** (from `effects.json`). They all add together and multiply the product's base price:
+
+```
+sellPrice = round( BasePrice × (1 + Σ effect%) )
+```
+
+For the mix above: `35 × (1 + 0.56 + 0.48 + 0.46 + 0.44 + 0.22) = 35 × 3.16 = $111`. Effects marked with a `—` (and a red border) are drawback effects with a `0` value — they add no sale value.
 
 ---
 
@@ -73,18 +85,21 @@ Effect sets are packed into a **64‑bit bitmask** (one bit per effect), so "is 
 ```
 Schedule 1 Calculator/
 ├── Controllers/
-│   └── HomeController.cs        # entry point — runs a sample query on Index
+│   └── HomeController.cs        # handles the form (product + count) and runs the search
 ├── Services/
 │   ├── DataService.cs           # loads and resolves the JSON data
 │   └── MixCalculator.cs         # the mixing simulation + profit search
 ├── Models/
 │   ├── Product.cs, Ingredient.cs, Effect.cs, ComplexMix.cs
+├── ViewModel/
+│   └── HomeViewModel.cs         # data passed to the page (form state + best mix)
 ├── Data/
 │   ├── effects.json             # effect ids, abbreviations, price multipliers
 │   ├── ingredients.json         # ingredients, costs, base effects
 │   ├── complexmixes.json        # reaction rules (indicator + ingredient → new effect)
 │   └── products.json            # products, base prices, starting effects
-└── Views/                       # Razor views
+├── Views/                       # Razor views (Home/Index.cshtml, Shared/_Layout.cshtml)
+└── wwwroot/css/site.css         # the theme
 ```
 
 ### Data model
@@ -106,14 +121,11 @@ Requires the [.NET 9 SDK](https://dotnet.microsoft.com/download).
 dotnet run --project "Schedule 1 Calculator/Schedule 1 Calculator.csproj"
 ```
 
-Then open <http://localhost:5249/>.
+Then open <http://localhost:5249/> and use the dropdowns to choose a product and ingredient count, then click **Calculate**.
 
-The home page runs a sample query defined in `HomeController.Index` (best 4‑ingredient mix for OG Kush). Change the product or ingredient count there:
+The form submits a plain `GET` (e.g. `/Home/Mix?product=cocaine&count=6`), so the current selection is reflected in the URL and you can bookmark or share a specific query. `HomeController` validates the product and clamps the count to 1–8.
 
-```csharp
-Product product = _data.Products.Single(p => p.Id == "og_kush");
-var bestMix = _mixer.FindMostProfitableMix(4, product);
-```
+> Higher ingredient counts search a much larger space. Counts up to ~6 are quick; 7–8 can take a few seconds.
 
 ---
 
