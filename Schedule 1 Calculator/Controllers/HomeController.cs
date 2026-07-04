@@ -17,9 +17,9 @@ namespace Schedule_1_Calculator.Controllers
 
         public IActionResult Index()
         {
-            Product product = _data.Products.Single(p => p.Id == "cocaine");
+            Product product = _data.Products.Single(p => p.Id == "og_kush");
 
-            var bestMix = _mixer.FindMostProfitableMix(2, product);
+            var bestMix = _mixer.FindMostProfitableMix(4, product);
             return View(bestMix);
         }
 

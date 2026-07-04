@@ -25,7 +25,7 @@
   { "id": "refreshing", "abbr": "Re", "value": 0.14 },
   { "id": "munchies", "abbr": "Mu", "value": 0.12 },
   { "id": "calming", "abbr": "Ca", "value": 0.10 },
-  { "id": "disorientating", "abbr": "Dn", "value": 0 },
+  { "id": "disorienting", "abbr": "Dn", "value": 0 },
   { "id": "explosive", "abbr": "Ex", "value": 0 },
   { "id": "laxative", "abbr": "La", "value": 0 },
   { "id": "paranoia", "abbr": "Pa", "value": 0 },
