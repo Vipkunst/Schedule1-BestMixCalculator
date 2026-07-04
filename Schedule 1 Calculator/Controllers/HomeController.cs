@@ -2,6 +2,7 @@ using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using Schedule_1_Calculator.Models;
 using Schedule_1_Calculator.Services;
+using Schedule_1_Calculator.ViewModel;
 
 namespace Schedule_1_Calculator.Controllers
 {
@@ -15,17 +16,33 @@ namespace Schedule_1_Calculator.Controllers
             _data = dataService;
         }
 
-        public IActionResult Index()
+        public IActionResult Index(string? product = "og_kush", int count = 4)
         {
-            Product product = _data.Products.Single(p => p.Id == "og_kush");
+            // Fall back to sensible defaults if the request asks for something that isn't there.
+            Product selectedProduct = _data.Products.FirstOrDefault(p => p.Id == product)
+                ?? _data.Products.Single(p => p.Id == "og_kush");
+            count = Math.Clamp(count, 1, 8);
 
-            var bestMix = _mixer.FindMostProfitableMix(4, product);
-            return View(bestMix);
+            var bestMix = _mixer.FindMostProfitableMix(count, selectedProduct);
+            var viewModel = new HomeViewModel
+            {
+                BaseProducts = _data.Products,
+                SelectedProductId = selectedProduct.Id,
+                SelectedIngredientCount = count,
+                BestComboIngredients = bestMix.bestComboIngredients,
+                BestProfit = bestMix.bestProfit,
+                BestSellPrice = bestMix.bestSellPrice,
+                BestComboCost = bestMix.bestComboCost,
+                BestComboEffects = bestMix.bestComboEffects
+            };
+            // Render the Index view explicitly so the shared Mix action (which delegates here)
+            // doesn't look for a non-existent "Mix" view.
+            return View("Index", viewModel);
         }
 
-        public IActionResult Privacy()
+        public IActionResult Mix(string? product = "og_kush", int count = 4)
         {
-            return View();
+            return Index(product, count);
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

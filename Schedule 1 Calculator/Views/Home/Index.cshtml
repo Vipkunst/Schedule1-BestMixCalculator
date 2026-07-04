@@ -1,34 +1,102 @@
-﻿@model (List<Ingredient> bestComboIngredients, double bestProfit, double bestSellPrice, double bestComboCost, List<Effect> bestComboEffects)
+@model Schedule_1_Calculator.ViewModel.HomeViewModel
 
 @{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "Mix Calculator";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Best @Model.bestComboIngredients.Count Ingredient Mix</h1>
-    @foreach (var ingedient in Model.bestComboIngredients)
-    {
-        <div>
-            @ingedient.Id
+@functions {
+    // "mega_bean" -> "Mega Bean", "og_kush" -> "OG Kush"
+    string Pretty(string id) =>
+        System.Globalization.CultureInfo.CurrentCulture.TextInfo
+            .ToTitleCase(id.Replace("_", " "))
+            .Replace("Og ", "OG ");
+}
+
+<section class="mixer">
+    <header class="mixer__intro">
+        <h1 class="mixer__title">Mix Calculator</h1>
+        <p class="mixer__subtitle">Find the most profitable recipe for any product.</p>
+    </header>
+
+    <form class="mix-form" method="get" asp-controller="Home" asp-action="Mix">
+        <div class="mix-form__field">
+            <label class="mix-form__label" for="product">Base Product</label>
+            <select class="mix-form__select" id="product" name="product">
+                @foreach (var product in Model.BaseProducts)
+                {
+                    if (product.Id == Model.SelectedProductId)
+                    {
+                        <option value="@product.Id" selected>@Pretty(product.Id)</option>
+                    }
+                    else
+                    {
+                        <option value="@product.Id">@Pretty(product.Id)</option>
+                    }
+                }
+            </select>
         </div>
-    }
 
-    <br />
+        <div class="mix-form__field">
+            <label class="mix-form__label" for="count">Ingredients</label>
+            <select class="mix-form__select" id="count" name="count">
+                @for (int i = 1; i <= 8; i++)
+                {
+                    if (i == Model.SelectedIngredientCount)
+                    {
+                        <option value="@i" selected>@i</option>
+                    }
+                    else
+                    {
+                        <option value="@i">@i</option>
+                    }
+                }
+            </select>
+        </div>
 
-    <div>
-        <div>TotalCost: @Model.bestComboCost</div>
-        <div>SellingCost: @Model.bestSellPrice</div>
-    </div>
+        <button class="mix-form__submit" type="submit">Calculate</button>
+    </form>
 
-    <br />
+    <article class="recipe">
+        <h2 class="recipe__heading">Best @Model.BestComboIngredients.Count-Ingredient Mix</h2>
 
-    <div>
-        <div>Effects:</div>
-        @foreach (var effect in Model.bestComboEffects)
-        {
-            <div>
-                @effect.Id
+        <div class="stats">
+            <div class="stat stat--price">
+                <span class="stat__label">Sell Price</span>
+                <span class="stat__value">$@Model.BestSellPrice.ToString("0")</span>
             </div>
-        }
-    </div>
-</div>
+            <div class="stat stat--cost">
+                <span class="stat__label">Ingredient Cost</span>
+                <span class="stat__value">$@Model.BestComboCost.ToString("0")</span>
+            </div>
+            <div class="stat stat--profit">
+                <span class="stat__label">Profit</span>
+                <span class="stat__value">$@Model.BestProfit.ToString("0")</span>
+            </div>
+        </div>
+
+        <div class="recipe__section">
+            <h3 class="recipe__subheading">Mixing Order</h3>
+            <ol class="ingredient-chain">
+                @foreach (var ingredient in Model.BestComboIngredients)
+                {
+                    <li class="ingredient">@Pretty(ingredient.Id)</li>
+                }
+            </ol>
+        </div>
+
+        <div class="recipe__section">
+            <h3 class="recipe__subheading">Effects &middot; @Model.BestComboEffects.Count</h3>
+            <ul class="effect-list">
+                @foreach (var effect in Model.BestComboEffects)
+                {
+                    var isBonus = effect.Value > 0;
+                    <li class="effect @(isBonus ? "effect--bonus" : "effect--drawback")" title="@Pretty(effect.Id)">
+                        <span class="effect__abbr">@effect.Abbr</span>
+                        <span class="effect__name">@Pretty(effect.Id)</span>
+                        <span class="effect__mult">@(isBonus ? "+" + (effect.Value * 100).ToString("0") + "%" : "—")</span>
+                    </li>
+                }
+            </ul>
+        </div>
+    </article>
+</section>
