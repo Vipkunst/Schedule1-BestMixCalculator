@@ -8,7 +8,7 @@
   { "id": "flu_medicine", "cost": 5, "effects": ["sedating"] },
   { "id": "energy_drink", "cost": 6, "effects": ["athletic"] },
   { "id": "motor_oil", "cost": 6, "effects": ["slippery"] },
-  { "id": "gasoline", "cost": 5, "effects": ["sedating"] },
+  { "id": "gasoline", "cost": 5, "effects": ["toxic"] },
   { "id": "mega_bean", "cost": 7, "effects": ["foggy"] },
   { "id": "chili", "cost": 7, "effects": ["spicy"] },
   { "id": "battery", "cost": 8, "effects": ["bright_eyed"] },
