@@ -20,6 +20,18 @@ var authPass = builder.Configuration["BasicAuth:Password"];
 
 var app = builder.Build();
 
+// Configure the HTTP request pipeline.
+if (!app.Environment.IsDevelopment())
+{
+    app.UseExceptionHandler("/Home/Error");
+    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
+    app.UseHsts();
+}
+
+// Force HTTPS. This runs before the password gate so the password is never requested or sent
+// over plain HTTP — an HTTP request is redirected to HTTPS first.
+app.UseHttpsRedirection();
+
 if (!string.IsNullOrEmpty(authPass))
 {
     app.Use(async (context, next) =>
@@ -65,16 +77,6 @@ if (!string.IsNullOrEmpty(authPass))
         CryptographicOperations.FixedTimeEquals(Encoding.UTF8.GetBytes(a), Encoding.UTF8.GetBytes(b));
 }
 
-// Configure the HTTP request pipeline.
-if (!app.Environment.IsDevelopment())
-{
-    app.UseExceptionHandler("/Home/Error");
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-    app.UseHsts();
-}
-
-
-//app.UseHttpsRedirection();
 app.UseRouting();
 
 app.UseAuthorization();
