@@ -3,6 +3,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex">
     <title>@ViewData["Title"] · Schedule 1 Calculator</title>
     <script type="importmap"></script>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
@@ -17,6 +18,7 @@
             </a>
             <ul class="site-nav__links">
                 <li><a asp-controller="Home" asp-action="Index">Calculator</a></li>
+                <li><a asp-controller="Home" asp-action="About">About</a></li>
             </ul>
         </nav>
     </header>
@@ -28,6 +30,7 @@
     <footer class="site-footer">
         <span>&copy; @DateTime.Now.Year Schedule 1 Calculator</span>
         <span class="site-footer__note">Fan-made companion tool for the game Schedule 1.</span>
+        <a asp-controller="Home" asp-action="Privacy">Privacy</a>
     </footer>
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>

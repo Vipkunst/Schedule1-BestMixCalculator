@@ -312,6 +312,65 @@ a:hover {
     font-size: 0.9rem;
 }
 
+/* ---------- About page ---------- */
+.about__card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.25rem 1.5rem;
+    margin-bottom: 1rem;
+    line-height: 1.6;
+}
+
+.about__heading {
+    margin: 0 0 0.6rem;
+    font-size: 1.15rem;
+    color: var(--accent);
+}
+
+.about__card p {
+    margin: 0 0 0.75rem;
+}
+
+.about__card p:last-child {
+    margin-bottom: 0;
+}
+
+.about__list {
+    margin: 0;
+    padding-left: 1.2rem;
+}
+
+.about__list li + li {
+    margin-top: 0.4rem;
+}
+
+.about code {
+    padding: 0.1rem 0.35rem;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    font-size: 0.9em;
+}
+
+.about__formula {
+    margin: 0 0 0.75rem;
+    padding: 0.85rem 1rem;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--accent);
+    border-radius: 6px;
+    overflow-x: auto;
+    white-space: pre;
+}
+
+.about__disclaimer {
+    color: var(--text-muted);
+    font-size: 0.85rem;
+    text-align: center;
+    margin-top: 1.25rem;
+}
+
 /* ---------- Responsive ---------- */
 @media (max-width: 560px) {
     .stats {

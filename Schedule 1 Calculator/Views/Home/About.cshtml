@@ -1,0 +1,69 @@
+@{
+    ViewData["Title"] = "About";
+}
+
+<section class="about">
+    <header class="mixer__intro">
+        <h1 class="mixer__title">About</h1>
+        <p class="mixer__subtitle">What this tool is and how it works.</p>
+    </header>
+
+    <article class="about__card">
+        <h2 class="about__heading">What it is</h2>
+        <p>
+            A fan‑made companion tool for the game <strong>Schedule&nbsp;1</strong>. Pick a base
+            product and how many ingredients to use, and it finds the <strong>most profitable
+            recipe</strong> it can — the exact mixing order, the resulting effects, and the cost,
+            sell price and profit.
+        </p>
+    </article>
+
+    <article class="about__card">
+        <h2 class="about__heading">How it works</h2>
+        <p>It simulates the game's mixing rules when each ingredient is added:</p>
+        <ul class="about__list">
+            <li><strong>Reactions apply simultaneously</strong> against a snapshot of the effects present before the ingredient went in — no cascading within a single step.</li>
+            <li>A reaction only fires if its resulting effect <strong>isn't already present</strong>.</li>
+            <li>The ingredient's own effect is added last, and only while the mix is below the <strong>8‑effect cap</strong>.</li>
+        </ul>
+        <p>
+            To find the best recipe it searches every ingredient order — and ingredients may
+            <strong>repeat</strong>, since the same ingredient reacts differently depending on
+            what's already in the mix. A state‑based search keeps only the cheapest path to each
+            distinct set of effects, so it stays fast while still finding the true optimum.
+        </p>
+    </article>
+
+    <article class="about__card">
+        <h2 class="about__heading">The pricing formula</h2>
+        <p>Every effect has a price multiplier (its <code>%</code>). They add together and multiply the product's base price:</p>
+        <pre class="about__formula">sellPrice = round( BasePrice × (1 + Σ effect%) )
+profit    = sellPrice − ingredient cost</pre>
+        <p>
+            For example, an OG Kush (base $35) mix with +56% +48% +46% +44% +22% sells for
+            <code>35 × (1 + 2.16) = $111</code>. Effects shown with a <code>—</code> (and a red
+            border) are drawback effects worth 0% — they add no sale value.
+        </p>
+    </article>
+
+    <article class="about__card">
+        <h2 class="about__heading">Accuracy &amp; limitations</h2>
+        <ul class="about__list">
+            <li>Results are only as complete as the reaction data (<code>complexmixes.json</code>). If a reaction the game uses is missing, the search can't discover mixes that rely on it.</li>
+            <li>Profit counts <strong>only the mixer ingredients</strong> — it does not include the cost of the base product itself (seed, or buying the base unit).</li>
+            <li>The effect percentages are the game's raw multipliers; actual dollar amounts depend on each product's base price.</li>
+        </ul>
+    </article>
+
+    <article class="about__card">
+        <h2 class="about__heading">Credits &amp; links</h2>
+        <ul class="about__list">
+            <li>Source code: <a href="https://github.com/Vipkunst/Schedule1-BestMixCalculator">Schedule 1 Calculator on GitHub</a></li>
+            <li>Effect, ingredient and reaction data is based on the community <em>Schedule&nbsp;1</em> wiki and mixing guides.</li>
+        </ul>
+    </article>
+
+    <p class="about__disclaimer">
+        A companion tool for <em>Schedule&nbsp;1</em>, a satirical video game. It has nothing to do with anything outside the game.
+    </p>
+</section>

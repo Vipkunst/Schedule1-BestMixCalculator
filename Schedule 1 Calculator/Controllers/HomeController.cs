@@ -45,6 +45,16 @@ namespace Schedule_1_Calculator.Controllers
             return Index(product, count);
         }
 
+        public IActionResult About()
+        {
+            return View();
+        }
+
+        public IActionResult Privacy()
+        {
+            return View();
+        }
+
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {
