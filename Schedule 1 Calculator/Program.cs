@@ -1,3 +1,5 @@
+using System.Security.Cryptography;
+using System.Text;
 using Schedule_1_Calculator.Services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -8,7 +10,60 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddSingleton<DataService>();
 builder.Services.AddSingleton<MixCalculator>();
 
+// Shared-password gate (HTTP Basic Auth). Set BasicAuth:Password to require a password before
+// the site can be viewed; leave it empty to disable the gate (e.g. for local development).
+// Configure it outside source control — via an environment variable (BasicAuth__Password),
+// user-secrets, or appsettings. NOTE: Basic Auth sends the password on every request, so only
+// expose the site over HTTPS.
+var authUser = builder.Configuration["BasicAuth:Username"] ?? "friends";
+var authPass = builder.Configuration["BasicAuth:Password"];
+
 var app = builder.Build();
+
+if (!string.IsNullOrEmpty(authPass))
+{
+    app.Use(async (context, next) =>
+    {
+        if (TryGetBasicCredentials(context.Request.Headers.Authorization, out var user, out var pass)
+            && FixedEquals(user, authUser) && FixedEquals(pass, authPass))
+        {
+            await next();
+            return;
+        }
+
+        context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+        context.Response.Headers.WWWAuthenticate = "Basic realm=\"Schedule 1 Calculator\", charset=\"UTF-8\"";
+        await context.Response.WriteAsync("Authentication required.");
+    });
+
+    static bool TryGetBasicCredentials(string? header, out string user, out string pass)
+    {
+        user = pass = string.Empty;
+        if (header is null || !header.StartsWith("Basic ", StringComparison.OrdinalIgnoreCase))
+            return false;
+
+        string decoded;
+        try
+        {
+            decoded = Encoding.UTF8.GetString(Convert.FromBase64String(header["Basic ".Length..].Trim()));
+        }
+        catch (FormatException)
+        {
+            return false;
+        }
+
+        int sep = decoded.IndexOf(':');
+        if (sep < 0) return false;
+
+        user = decoded[..sep];
+        pass = decoded[(sep + 1)..];
+        return true;
+    }
+
+    // Constant-time comparison so the check doesn't leak the password via timing.
+    static bool FixedEquals(string a, string b) =>
+        CryptographicOperations.FixedTimeEquals(Encoding.UTF8.GetBytes(a), Encoding.UTF8.GetBytes(b));
+}
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
