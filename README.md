@@ -82,8 +82,13 @@ Effect sets are packed into a **64‑bit bitmask** (one bit per effect), so "is 
 
 ## Project layout
 
+The repository root *is* the project (single‑project layout):
+
 ```
-Schedule 1 Calculator/
+.
+├── Program.cs                   # app startup + shared-password gate
+├── Schedule 1 Calculator.csproj
+├── Schedule 1 Calculator.sln
 ├── Controllers/
 │   └── HomeController.cs        # handles the form (product + count) and runs the search
 ├── Services/
@@ -118,7 +123,7 @@ All four JSON files are loaded once at startup by `DataService` and cross‑refe
 Requires the [.NET 9 SDK](https://dotnet.microsoft.com/download).
 
 ```bash
-dotnet run --project "Schedule 1 Calculator/Schedule 1 Calculator.csproj"
+dotnet run
 ```
 
 Then open <http://localhost:5249/> and use the dropdowns to choose a product and ingredient count, then click **Calculate**.
