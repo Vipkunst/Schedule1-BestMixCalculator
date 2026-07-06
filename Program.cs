@@ -34,8 +34,29 @@ app.UseHttpsRedirection();
 
 if (!string.IsNullOrEmpty(authPass))
 {
+    // User agents of link-preview crawlers (Discord, X, Slack, …). They can't log in, so we let
+    // them past the gate to read the Open Graph tags — otherwise social embeds never render.
+    var previewBots = new[]
+    {
+        "Discordbot", "Twitterbot", "facebookexternalhit", "Slackbot",
+        "TelegramBot", "WhatsApp", "LinkedInBot", "redditbot"
+    };
+
     app.Use(async (context, next) =>
     {
+        // Let the preview image (fetched anonymously by Discord's image proxy) and known
+        // link-preview crawlers through the gate so social embeds work without a password.
+        var userAgent = context.Request.Headers.UserAgent.ToString();
+        var isPreviewRequest =
+            string.Equals(context.Request.Path.Value, "/og-image.png", StringComparison.OrdinalIgnoreCase)
+            || previewBots.Any(bot => userAgent.Contains(bot, StringComparison.OrdinalIgnoreCase));
+
+        if (isPreviewRequest)
+        {
+            await next();
+            return;
+        }
+
         if (TryGetBasicCredentials(context.Request.Headers.Authorization, out var user, out var pass)
             && FixedEquals(user, authUser) && FixedEquals(pass, authPass))
         {

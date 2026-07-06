@@ -3,8 +3,22 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="robots" content="noindex">
     <title>@ViewData["Title"] · Schedule 1 Calculator</title>
+
+    @{
+        var ogBase = $"{Context.Request.Scheme}://{Context.Request.Host}";
+    }
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Schedule 1 Calculator" />
+    <meta property="og:title" content="@ViewData["Title"] · Schedule 1 Calculator" />
+    <meta property="og:description" content="Find the most profitable recipe for any product in Schedule 1." />
+    <meta property="og:image" content="@(ogBase)/og-image.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="@ViewData["Title"] · Schedule 1 Calculator" />
+    <meta name="twitter:description" content="Find the most profitable recipe for any product in Schedule 1." />
+    <meta name="twitter:image" content="@(ogBase)/og-image.png" />
     <script type="importmap"></script>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
@@ -35,7 +49,6 @@
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="~/js/site.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

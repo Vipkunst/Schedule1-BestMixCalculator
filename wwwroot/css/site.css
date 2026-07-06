@@ -210,7 +210,7 @@ a:hover {
 }
 
 .recipe__subheading {
-    margin: 0 0 0.75rem;
+    margin: 25px 0 0.75rem;
     font-size: 0.9rem;
     color: var(--text-muted);
     border-bottom: 1px solid var(--border);
@@ -310,6 +310,64 @@ a:hover {
 .effect__mult {
     color: var(--text-muted);
     font-size: 0.9rem;
+}
+
+/* ---------- Copy button ---------- */
+.btn-wrapper {
+    display: flex;
+    justify-content: flex-start;
+    gap: 0.5rem;
+    margin-top: 1rem;
+}
+
+.copy-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.35rem 0.7rem;
+    font-size: 0.85rem;
+    font-family: inherit;
+    color: var(--text-muted);
+    background: transparent;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background 0.15s, border-color 0.15s, color 0.15s;
+}
+
+.copy-button svg {
+    display: block;
+    width: 14px;
+    height: 14px;
+}
+
+.copy-button:hover {
+    color: var(--text);
+    border-color: var(--text-muted);
+}
+
+.copy-button:focus-visible {
+    outline: none;
+    border-color: var(--accent);
+}
+
+.copy-button--copied {
+    color: var(--accent);
+    border-color: var(--accent);
+}
+
+.copy-button__label {
+    display: inline-block;
+}
+
+.copy-button--copied .copy-button__label {
+    animation: copy-pop 0.25s ease;
+}
+
+@keyframes copy-pop {
+    0%   { transform: scale(0.8); opacity: 0; }
+    60%  { transform: scale(1.05); }
+    100% { transform: scale(1); opacity: 1; }
 }
 
 /* ---------- About page ---------- */

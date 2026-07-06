@@ -99,4 +99,84 @@
             </ul>
         </div>
     </article>
+    <div class="btn-wrapper">
+        <button class="copy-button" onclick="copyMixUrl(this)">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+            </svg><span class="copy-button__label">Copy URL</span>
+        </button>
+        <button class="copy-button" onclick="copyMixImage(this)">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                <circle cx="8.5" cy="8.5" r="1.5"></circle>
+                <path d="M21 15l-5-5L5 21"></path>
+            </svg><span class="copy-button__label">Copy Image</span>
+        </button>
+    </div>
 </section>
+
+<script src="https://cdn.jsdelivr.net/npm/html-to-image@1.11.13/dist/html-to-image.js"></script>
+<script>
+    // Briefly swap the button label to give feedback, then restore it.
+    function flashButton(btn, message) {
+        const label = btn.querySelector('.copy-button__label');
+        const original = label.textContent;
+        btn.classList.add('copy-button--copied');
+        label.textContent = message;
+        setTimeout(() => {
+            btn.classList.remove('copy-button--copied');
+            label.textContent = original;
+        }, 1500);
+    }
+
+    async function copyMixUrl(btn) {
+        const form = document.querySelector('.mix-form');
+        const url = form.action + '?' + new URLSearchParams(new FormData(form));
+
+        try {
+            await navigator.clipboard.writeText(url);
+            flashButton(btn, 'Copied!');
+        } catch (err) {
+            console.error('Failed to copy URL:', err);
+        }
+    }
+
+    // Render the mixer section (title + form + recipe) to a PNG blob, skipping
+    // the copy buttons. Returns a Promise<Blob> synchronously so the caller
+    // keeps the user gesture alive while the image renders.
+    function getMixImage() {
+        const target = document.querySelector('.mixer');
+        return htmlToImage.toBlob(target, {
+            pixelRatio: 2,
+            backgroundColor: getComputedStyle(document.body).backgroundColor,
+            filter: (node) => !(node.classList && node.classList.contains('btn-wrapper'))
+        });
+    }
+
+    async function copyMixImage(btn) {
+        try {
+            // Pass the blob-producing promise straight to ClipboardItem so the
+            // browser keeps the user gesture alive while the image renders.
+            await navigator.clipboard.write([
+                new ClipboardItem({ 'image/png': getMixImage() })
+            ]);
+            flashButton(btn, 'Copied!');
+        } catch (err) {
+            console.error('Failed to copy image:', err);
+            // Fallback: download the PNG if clipboard image writing is unsupported.
+            try {
+                const blob = await getMixImage();
+                const url = URL.createObjectURL(blob);
+                const link = document.createElement('a');
+                link.download = 'mix.png';
+                link.href = url;
+                link.click();
+                URL.revokeObjectURL(url);
+                flashButton(btn, 'Downloaded');
+            } catch (fallbackErr) {
+                console.error('Failed to export image:', fallbackErr);
+            }
+        }
+    }
+</script>
