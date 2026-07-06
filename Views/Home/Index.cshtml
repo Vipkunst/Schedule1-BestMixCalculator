@@ -177,16 +177,33 @@
         });
     }
 
-    async function copyMixImage(btn) {
+    // Write a PNG blob to the clipboard, trying the forms different browsers accept.
+    async function writeImageToClipboard() {
+        if (!navigator.clipboard || !window.ClipboardItem || !window.isSecureContext) {
+            throw new Error('Clipboard image API unavailable (needs HTTPS + a supporting browser)');
+        }
+
         try {
-            // Pass the blob-producing promise straight to ClipboardItem so the
-            // browser keeps the user gesture alive while the image renders.
+            // Chrome/Safari: passing the promise keeps the user gesture alive
+            // while the image renders.
             await navigator.clipboard.write([
                 new ClipboardItem({ 'image/png': getMixImage() })
             ]);
+        } catch (promiseErr) {
+            // Firefox (and others) reject a promise value — resolve the blob first.
+            const blob = await getMixImage();
+            await navigator.clipboard.write([
+                new ClipboardItem({ 'image/png': blob })
+            ]);
+        }
+    }
+
+    async function copyMixImage(btn) {
+        try {
+            await writeImageToClipboard();
             flashButton(btn, 'Copied!');
         } catch (err) {
-            console.error('Failed to copy image:', err);
+            console.error('Clipboard image copy unavailable, downloading instead:', err);
             // Fallback: download the PNG if clipboard image writing is unsupported.
             try {
                 const blob = await getMixImage();
