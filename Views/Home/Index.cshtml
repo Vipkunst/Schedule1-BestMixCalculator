@@ -130,12 +130,35 @@
         }, 1500);
     }
 
+    // Copy text to the clipboard. navigator.clipboard only exists in a secure
+    // context (HTTPS/localhost), so fall back to a hidden textarea + execCommand
+    // when it's unavailable (e.g. the page is served over plain HTTP).
+    async function copyText(text) {
+        if (navigator.clipboard && window.isSecureContext) {
+            await navigator.clipboard.writeText(text);
+            return;
+        }
+
+        const textarea = document.createElement('textarea');
+        textarea.value = text;
+        textarea.style.position = 'fixed';
+        textarea.style.opacity = '0';
+        document.body.appendChild(textarea);
+        textarea.focus();
+        textarea.select();
+        try {
+            if (!document.execCommand('copy')) throw new Error('execCommand copy failed');
+        } finally {
+            document.body.removeChild(textarea);
+        }
+    }
+
     async function copyMixUrl(btn) {
         const form = document.querySelector('.mix-form');
         const url = form.action + '?' + new URLSearchParams(new FormData(form));
 
         try {
-            await navigator.clipboard.writeText(url);
+            await copyText(url);
             flashButton(btn, 'Copied!');
         } catch (err) {
             console.error('Failed to copy URL:', err);
