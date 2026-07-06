@@ -203,8 +203,7 @@
             await writeImageToClipboard();
             flashButton(btn, 'Copied!');
         } catch (err) {
-            console.error('Clipboard image copy unavailable, downloading instead:', err);
-            // Fallback: download the PNG if clipboard image writing is unsupported.
+            // Expected when the browser can't write images (e.g. no HTTPS) — download instead.
             try {
                 const blob = await getMixImage();
                 const url = URL.createObjectURL(blob);
@@ -213,10 +212,17 @@
                 link.href = url;
                 link.click();
                 URL.revokeObjectURL(url);
-                flashButton(btn, 'Downloaded');
+                flashButton(btn, 'Saved!');
             } catch (fallbackErr) {
                 console.error('Failed to export image:', fallbackErr);
             }
         }
+    }
+
+    // Without a secure context (HTTPS) the browser can't copy images to the clipboard,
+    // so label the button honestly as a download.
+    if (!(navigator.clipboard && window.ClipboardItem && window.isSecureContext)) {
+        const imageLabel = document.querySelector('button[onclick*="copyMixImage"] .copy-button__label');
+        if (imageLabel) imageLabel.textContent = 'Save Image';
     }
 </script>
